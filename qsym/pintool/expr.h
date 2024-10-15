@@ -8,6 +8,7 @@
 #include <set>
 #include <sstream>
 #include <vector>
+#include <queue>
 
 #include <z3++.h>
 
@@ -187,6 +188,32 @@ class Expr : public DependencyNode {
         }
       }
       return *deps_;
+    }
+    
+    z3::func_decl_vector getVarDeclaration(){
+      z3::func_decl_vector decls(context_);
+      // using bfs to collect all Read expr
+      std::queue<Expr*> q;
+      q.push(this);
+      while (!q.empty()) {
+        Expr *e = q.front();
+        q.pop();
+        if (e->kind() == Read)
+          decls.push_back(e->toZ3Expr().decl());
+        for (INT32 i = 0; i < e->num_children(); i++)
+          q.push(e->getChild(i).get());
+      }
+      return decls;
+    }
+
+    std::string serialize() {
+      std::stringstream ss;
+      z3::func_decl_vector decls = getVarDeclaration();
+      for (INT32 i = 0; i < decls.size(); i++) {
+        ss << decls[i].to_string() << "\n";
+      }
+      ss << "(assert " << this->toZ3Expr().to_string() << ")";
+      return ss.str();
     }
 
     DependencySet computeDependencies() override;

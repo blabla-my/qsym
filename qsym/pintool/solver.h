@@ -1,6 +1,7 @@
 #ifndef QSYM_SOLVER_H_
 #define QSYM_SOLVER_H_
 
+#include <cstdint>
 #include <z3++.h>
 #include <fstream>
 #include <sys/time.h>
@@ -38,7 +39,7 @@ public:
   z3::check_result check();
 
   bool checkAndSave(const std::string& postfix="");
-  void addJcc(ExprRef, bool, ADDRINT);
+  void addJcc(ExprRef, bool, ADDRINT, const char*, uint32_t, uint32_t);
   void addAddr(ExprRef, ADDRINT);
   void addAddr(ExprRef, llvm::APInt);
   void addValue(ExprRef, ADDRINT);
