@@ -210,9 +210,9 @@ class Expr : public DependencyNode {
       std::stringstream ss;
       z3::func_decl_vector decls = getVarDeclaration();
       for (INT32 i = 0; i < decls.size(); i++) {
-        ss << decls[i].to_string() << "\n";
+        ss << decls[i].to_string();
       }
-      ss << "(assert " << this->toZ3Expr().to_string() << ")";
+      ss << "(assert " << this->toZ3Expr().simplify().to_string() << ")";
       return ss.str();
     }
 

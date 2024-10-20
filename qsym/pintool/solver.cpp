@@ -159,9 +159,11 @@ bool Solver::checkAndSave(const std::string& postfix) {
 
 void Solver::addJcc(ExprRef e, bool taken, ADDRINT pc, const char* filename, uint32_t ln, uint32_t col) {
   static std::ofstream ofs("/tmp/constraint.txt", std::ofstream::out);
-  ofs << "serialize: " << e->serialize() << "\n";
+  std::string dbginfo;
   if(filename != nullptr)
-    ofs << "file: " << filename << ", line: " << ln << ", col: " << col << "\n";
+    dbginfo = "file: " + std::string(filename) + ", line: " + std::to_string(ln) + ", col: " + std::to_string(col);
+  ofs << "#START_EXPR " << e->serialize() << " #END_EXPR\n";
+  ofs << "#START_DBG " << dbginfo << " #END_DBG\n"; 
   ofs.flush();
   // Save the last instruction pointer for debugging
   last_pc_ = pc;
